@@ -261,10 +261,18 @@ function isOpenNow() {
   const hours = BUSINESS.hours[day];
   if (!hours) return { open: false, message: "We're closed today (Sunday)" };
 
-  const [openH, openM] = hours.open.split(":").map(Number);
-  const [closeH, closeM] = hours.close.replace(" AM","").replace(" PM","").split(":").map(Number);
-  const openMin  = openH * 60 + openM;
-  const closeMin = (closeH < 10 ? closeH + 12 : closeH) * 60 + closeM;
+  function parseTime(str) {
+    const isPM = str.includes("PM");
+    const cleaned = str.replace(" AM","").replace(" PM","");
+    const [h, m] = cleaned.split(":").map(Number);
+    let hour = h;
+    if (isPM && h !== 12) hour += 12;
+    if (!isPM && h === 12) hour = 0;
+    return hour * 60 + (m || 0);
+  }
+
+  const openMin  = parseTime(hours.open);
+  const closeMin = parseTime(hours.close);
   const nowMin   = now.getHours() * 60 + now.getMinutes();
 
   if (nowMin >= openMin && nowMin < closeMin) {

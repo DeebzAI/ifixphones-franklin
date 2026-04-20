@@ -129,6 +129,12 @@
       transition: box-shadow 0.2s;
     }
     .nav.scrolled { box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+
+    /* Funnel mode — hide nav distractions */
+    .nav.funnel-mode .nav-links { display: none !important; }
+    .nav.funnel-mode .nav-cta .btn-secondary { display: none !important; }
+    .nav.funnel-mode .nav-call-sub { display: none !important; }
+    .nav.funnel-mode { border-bottom-color: transparent; background: transparent; backdrop-filter: none; }
     .nav-inner {
       max-width: 1200px; margin: 0 auto; padding: 0 20px;
       height: 60px; display: flex; align-items: center; justify-content: space-between;
@@ -470,11 +476,17 @@
     }
 
     /* ==================== REPAIR QUOTE FUNNEL (scoped .rq-) ==================== */
-    .rq-section { background: var(--white); padding: 40px 20px; border-bottom: 1px solid var(--gray-200); }
-    .rq-section-inner { max-width: 520px; margin: 0 auto; }
-    .rq-section-header { text-align: center; margin-bottom: 24px; }
-    .rq-section-header h2 { font-size: 24px; font-weight: 800; color: var(--dark); margin-bottom: 6px; letter-spacing: -0.3px; }
-    .rq-section-header p  { font-size: 14px; color: var(--gray-500); }
+    .rq-section {
+      background: var(--white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 80px 20px 80px;
+      border-bottom: 1px solid var(--gray-200);
+      box-sizing: border-box;
+    }
+    .rq-section-inner { max-width: 520px; margin: 0 auto; width: 100%; }
 
     /* top bar */
     .rq-top { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; min-height: 36px; }
@@ -570,6 +582,30 @@
     /* back btn touch */
     .rq-back { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 
+    /* ==================== REVIEW CAROUSEL (compact inline) ==================== */
+    .rq-reviews {
+      border-top: 1px solid var(--gray-200);
+      padding-top: 12px; margin-top: 12px;
+      overflow: hidden; position: relative;
+    }
+    .rq-review-ticker {
+      display: flex; transition: transform 0.45s ease;
+    }
+    .rq-review-slide {
+      min-width: 100%; box-sizing: border-box;
+    }
+    .rq-review-slide .stars { color: var(--gold); font-size: 12px; letter-spacing: 1px; margin-bottom: 4px; }
+    .rq-review-slide p { font-size: 12px; color: var(--gray-700); line-height: 1.45; margin-bottom: 4px; font-style: italic; }
+    .rq-review-slide .author { font-size: 11px; font-weight: 600; color: var(--gray-400); }
+    .rq-carousel-dots {
+      display: flex; justify-content: center; gap: 5px; padding-top: 8px;
+    }
+    .rq-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--gray-300); transition: background 0.3s; cursor: pointer;
+    }
+    .rq-dot.active { background: var(--blue); }
+
     /* ── Mobile-first: safe area + extra-small screens ── */
     .mobile-sticky {
       padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
@@ -605,33 +641,27 @@
         <li><a href="#location">Location</a></li>
       </ul>
       <div class="nav-cta">
-        <div class="nav-call-wrap">
-          <a href="tel:8573408381" class="btn btn-primary btn-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
-            Call Now
-          </a>
-          <span class="nav-call-sub" id="nav-call-sub" style="display:none"></span>
-        </div>
+        <a href="tel:8573408381" class="btn btn-primary btn-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+          Call Now
+        </a>
         <a href="https://square.site/appointments/book/11eda7ef68c6e3038cfeac1f6bbbd01e/LZG5K3HP33RKP/services" class="btn btn-secondary btn-sm">Book Repair</a>
       </div>
     </div>
   </nav>
 
   <!-- ==================== REPAIR QUOTE FUNNEL ==================== -->
-  <section class="rq-section" id="quote" style="padding-top:80px;">
+  <section class="rq-section" id="quote">
     <div class="rq-section-inner">
-      <div class="rq-section-header">
-        <div id="rq-open-status" style="margin-bottom:10px;"></div>
-        <h2>What's wrong with your phone?</h2>
-        <p>Get your price &amp; repair time in 60 seconds — no commitment.</p>
-      </div>
-      <div class="rq-top">
+      <div class="rq-top" id="rqTop">
         <div class="rq-back rq-hidden" id="rqBack" onclick="rqBack()">←</div>
-        <div class="rq-progress" id="rqProgress"></div>
       </div>
       <div id="rqContainer"></div>
     </div>
   </section>
+
+  <!-- ==================== PAGE CONTENT (hidden until funnel completes) ==================== -->
+  <div id="page-content" style="display:none;">
 
   <!-- ==================== COMMON REPAIRS & PRICING ==================== -->
   <section class="repairs-pricing" id="pricing">
@@ -724,28 +754,33 @@
       <div class="review-strip-cards">
         <div class="review-mini">
           <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p>"Screen fixed in under 20 minutes. He does it right in front of you. Way cheaper than Apple. Best place I've ever gotten my phone fixed."</p>
-          <div class="author">Sonia I. — Google</div>
+          <p>"Done in less than 20 minutes. He does it right in front of you. Truly the best place I've ever gotten my phone fixed!"</p>
+          <div class="author">Sonia L. — Google</div>
         </div>
         <div class="review-mini">
           <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p>"Fixed my phone in less than 15 minutes. It works great. I'll definitely be coming back!"</p>
+          <p>"He fixed my phone in less than 15 minutes! It works great!! I'll definitely be coming back!"</p>
           <div class="author">Angela Q. — Google</div>
         </div>
         <div class="review-mini">
           <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p>"Fixed my screen 2 years ago. Not an issue so far. Back again to fix another phone. Great service!"</p>
-          <div class="author">Andy C. — Google</div>
-        </div>
-        <div class="review-mini">
-          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
-          <p>"10/10. Shattered front and back — had it 100% fixed for an affordable price."</p>
-          <div class="author">Jennifer G. — Google</div>
+          <p>"Orkhan fixed my phone screen quickly and it looks brand new again. Very professional, friendly, and reasonably priced."</p>
+          <div class="author">Joy M. — Google</div>
         </div>
         <div class="review-mini">
           <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
           <p>"Excellent service. Fair pricing. Very friendly and communicative about what he was fixing and why."</p>
           <div class="author">Jagan-Nath K. — Google</div>
+        </div>
+        <div class="review-mini">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p>"This man saved the day for me again! He helped me figure it out at no charge. He is the best!"</p>
+          <div class="author">Kathleen S. — Google</div>
+        </div>
+        <div class="review-mini">
+          <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+          <p>"Orkhan is amazing! Fixed my phone perfectly in a timely manner. Super helpful and professional."</p>
+          <div class="author">Gina Q. — Google</div>
         </div>
       </div>
       <div style="margin-top:16px">
@@ -922,6 +957,8 @@
     </div>
   </footer>
 
+  </div><!-- /#page-content -->
+
   <!-- ==================== MOBILE STICKY CTA (aggressive) ==================== -->
   <div class="mobile-sticky" id="mobile-sticky">
     <a href="https://square.site/appointments/book/11eda7ef68c6e3038cfeac1f6bbbd01e/LZG5K3HP33RKP/services" class="btn btn-primary">Book Now</a>
@@ -934,6 +971,7 @@
   <script>
     // Nav scroll
     const nav = document.getElementById('nav');
+    nav.classList.add('funnel-mode'); // minimal nav while funnel is active
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 10);
     });
@@ -971,27 +1009,6 @@
 
     function updateAllOpenStatus() {
       const { isOpen, closesAt, opensNext, day } = getOpenInfo();
-
-      // Funnel section open/closed badge
-      const heroBadge = document.getElementById('rq-open-status');
-      if (heroBadge) {
-        if (isOpen) {
-          heroBadge.innerHTML = '<span class="hero-open-status open"><span class="pulse"></span> Open Now — closes at ' + closesAt + '</span>';
-        } else {
-          heroBadge.innerHTML = '<span class="hero-open-status closed"><span class="pulse"></span> Closed — Opens ' + opensNext + '</span>';
-        }
-      }
-
-      // Nav sub-text — only show when open
-      const navCallSub = document.getElementById('nav-call-sub');
-      if (navCallSub) {
-        if (isOpen) {
-          navCallSub.textContent = 'Open Now \u2022 15 Min Repairs';
-          navCallSub.style.display = '';
-        } else {
-          navCallSub.style.display = 'none';
-        }
-      }
 
       // Location section
       const locBadge = document.getElementById('open-status');
@@ -1081,18 +1098,12 @@
         const issues=RQ_ISSUES[rqState.device]||["other"];
         if(issues.length===1){rqState.issue=issues[0];rqState.step++;}
       }
-      // Update progress
-      const prog=document.getElementById("rqProgress");
-      const total=Math.max(rqStepCount(),3);
-      prog.innerHTML="";
-      for(let i=0;i<total;i++){
-        const s=document.createElement("div");
-        s.className="rq-seg"+(i<=rqState.step?" rq-active":"");
-        prog.appendChild(s);
-      }
-      // Back btn
+      // Back btn — hide on step 0 and on results screen
       const back=document.getElementById("rqBack");
-      back.classList.toggle("rq-hidden",rqState.step===0);
+      const isResults = !(rqState.step===0 || (rqState.step===1&&(rqState.device==="iphone"||rqState.device==="ipad")) || rqIsIssue() || rqIsQuality());
+      back.classList.toggle("rq-hidden", rqState.step===0 || isResults);
+      // Hide the whole top row on results (no floating arrow, "Try a different repair" handles it)
+      document.getElementById("rqTop").style.display = isResults ? "none" : "";
       // Render step
       const con=document.getElementById("rqContainer");
       con.innerHTML="";
@@ -1213,7 +1224,46 @@
           ${hasPrice?'<div class="rq-trust-item">✅ No hidden fees · Price is final</div>':""}
           <div class="rq-trust-item">✅ 90-day warranty on all repairs</div>
           <div class="rq-trust-item">✅ No appointment needed · Walk right in</div>
-          <div class="rq-trust-item">⭐ 4.9 stars · 523+ reviews</div>
+        </div>
+        <div class="rq-reviews">
+          <div class="rq-review-ticker" id="rqTrack">
+              <div class="rq-review-slide">
+                <div class="stars">★★★★★</div>
+                <p>"Done in less than 20 minutes. He does it right in front of you. Truly the best place I've ever gotten my phone fixed. Price is reasonable and very affordable!"</p>
+                <div class="author">Sonia L. — Google, 3 months ago</div>
+              </div>
+              <div class="rq-review-slide">
+                <div class="stars">★★★★★</div>
+                <p>"He fixed my phone in less than 15 minutes! It works great!! I'll definitely be coming back!"</p>
+                <div class="author">Angela Q. — Google, 3 months ago</div>
+              </div>
+              <div class="rq-review-slide">
+                <div class="stars">★★★★★</div>
+                <p>"Orkhan fixed my phone screen quickly and it looks brand new again. Very professional, friendly, and reasonably priced. Super reliable and efficient!"</p>
+                <div class="author">Joy M. — Google, 5 months ago</div>
+              </div>
+              <div class="rq-review-slide">
+                <div class="stars">★★★★★</div>
+                <p>"Excellent service. Fair pricing. Very friendly and communicative about what he was fixing and why."</p>
+                <div class="author">Jagan-Nath K. — Google, 6 months ago</div>
+              </div>
+              <div class="rq-review-slide">
+                <div class="stars">★★★★★</div>
+                <p>"This man saved the day for me again! My phone wouldn't work and he helped me figure it out at no charge! He is the best!"</p>
+                <div class="author">Kathleen S. — Google, a month ago</div>
+              </div>
+              <div class="rq-review-slide">
+                <div class="stars">★★★★★</div>
+                <p>"Orkhan is amazing! He fixed my phone perfectly in a timely manner. Super helpful and professional. I'll definitely be coming back!!"</p>
+                <div class="author">Gina Q. — Google, 3 months ago</div>
+              </div>
+              <div class="rq-review-slide">
+                <div class="stars">★★★★★</div>
+                <p>"Amazing service! All of my family and friends come here now. The owner is also wonderful!"</p>
+                <div class="author">Meghan G. — Google, a month ago</div>
+              </div>
+            </div>
+            <div class="rq-carousel-dots" id="rqDots"></div>
         </div>
         <div class="rq-cta-row">
           <a class="rq-cta rq-cta-call" href="tel:+18573408381">📞 Call</a>
@@ -1222,6 +1272,52 @@
         <a class="rq-cta rq-cta-book" href="${BUSINESS.bookingUrl}" target="_blank">📅 Book an Appointment</a>
         <div class="rq-reset" onclick="rqReset()">← Try a different repair</div>
       `;
+
+      // Start review carousel
+      (function() {
+        const track = document.getElementById('rqTrack');
+        const dotsEl = document.getElementById('rqDots');
+        const slides = track ? track.querySelectorAll('.rq-review-slide') : [];
+        let current = 0;
+        let timer;
+
+        // Build dots
+        slides.forEach((_, i) => {
+          const dot = document.createElement('div');
+          dot.className = 'rq-dot' + (i === 0 ? ' active' : '');
+          dot.onclick = () => goTo(i);
+          dotsEl.appendChild(dot);
+        });
+
+        function goTo(idx) {
+          current = (idx + slides.length) % slides.length;
+          track.style.transform = `translateX(-${current * 100}%)`;
+          dotsEl.querySelectorAll('.rq-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+          clearInterval(timer);
+          timer = setInterval(() => goTo(current + 1), 4500);
+        }
+
+        // Swipe support
+        let startX = 0;
+        track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+        track.addEventListener('touchend', e => {
+          const diff = startX - e.changedTouches[0].clientX;
+          if (Math.abs(diff) > 40) goTo(current + (diff > 0 ? 1 : -1));
+        });
+
+        timer = setInterval(() => goTo(current + 1), 4500);
+      })();
+
+      // Reveal the rest of the page now that the user has their result
+      const pageContent = document.getElementById('page-content');
+      if (pageContent && pageContent.style.display === 'none') {
+        pageContent.style.display = '';
+        pageContent.style.opacity = '0';
+        pageContent.style.transition = 'opacity 0.4s ease';
+        requestAnimationFrame(() => { pageContent.style.opacity = '1'; });
+      }
+      // Restore full nav
+      document.getElementById('nav').classList.remove('funnel-mode');
     }
 
     function rqScrollToTop() {
@@ -1245,6 +1341,11 @@
     }
     function rqReset() {
       rqState.step=0;rqState.device=null;rqState.model=null;rqState.issue=null;rqState.quality=null;
+      // Hide page content again so funnel is the only focus
+      const pageContent = document.getElementById('page-content');
+      if (pageContent) pageContent.style.display = 'none';
+      // Back to minimal nav
+      document.getElementById('nav').classList.add('funnel-mode');
       rqRender();
       rqScrollToTop();
     }
