@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Your Repair Quote — iFixPhones Franklin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <script src="../js/data.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding: 24px 16px 48px;
+    }
+
+    /* ── Shell ── */
+    .funnel-shell {
+      width: 100%;
+      max-width: 480px;
+    }
+
+    /* ── Top bar ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      min-height: 36px;
+    }
+    .back-btn {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      border: 1.5px solid #e5e7eb;
+      background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+      flex-shrink: 0;
+      transition: background 0.15s;
+    }
+    .back-btn:hover { background: #f3f4f6; }
+    .back-btn.hidden { visibility: hidden; pointer-events: none; }
+
+    /* ── Progress bar ── */
+    .progress-wrap {
+      flex: 1;
+      display: flex;
+      gap: 5px;
+    }
+    .progress-seg {
+      flex: 1;
+      height: 4px;
+      border-radius: 99px;
+      background: #e5e7eb;
+      transition: background 0.3s;
+    }
+    .progress-seg.active { background: #1a6bff; }
+
+    /* ── Step card ── */
+    .step-card {
+      background: #fff;
+      border-radius: 20px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      padding: 24px;
+      animation: fadeSlide 0.22s ease;
+    }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #1a6bff;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .step-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .step-sub {
+      font-size: 13px;
+      color: #6b7280;
+      margin-bottom: 20px;
+    }
+
+    /* ── Option grids ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .grid-1 {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ── Option tile (2-col) ── */
+    .opt-tile {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px 10px;
+      min-height: 80px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      user-select: none;
+      background: #fff;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .opt-tile:active { transform: scale(0.97); }
+    .opt-tile .tile-icon { font-size: 26px; margin-bottom: 6px; }
+    .opt-tile .tile-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      line-height: 1.3;
+    }
+    .opt-tile.selected {
+      border-color: #1a6bff;
+      background: #eff4ff;
+    }
+    .opt-tile.selected .tile-label { color: #1a6bff; }
+
+    /* ── Option row (1-col list) ── */
+    .opt-row {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px 16px;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      user-select: none;
+      background: #fff;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .opt-row:active { transform: scale(0.98); }
+    .opt-row .row-label {
+      font-size: 14px;
+      font-weight: 500;
+      color: #111827;
+    }
+    .opt-row .row-check {
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid #e5e7eb;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      flex-shrink: 0;
+    }
+    .opt-row.selected {
+      border-color: #1a6bff;
+      background: #eff4ff;
+    }
+    .opt-row.selected .row-label { color: #1a6bff; font-weight: 600; }
+    .opt-row.selected .row-check {
+      background: #1a6bff;
+      border-color: #1a6bff;
+      color: #fff;
+    }
+
+    /* ── Quality tier rows ── */
+    .quality-row {
+      border: 1.5px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 16px;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s;
+      background: #fff;
+      margin-bottom: 10px;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .quality-row:last-child { margin-bottom: 0; }
+    .quality-row.selected {
+      border-color: #1a6bff;
+      background: #eff4ff;
+    }
+    .quality-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 4px;
+    }
+    .quality-name {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+    }
+    .quality-row.selected .quality-name { color: #1a6bff; }
+    .quality-price {
+      font-size: 18px;
+      font-weight: 800;
+      color: #111827;
+    }
+    .quality-row.selected .quality-price { color: #1a6bff; }
+    .quality-desc {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.5;
+    }
+
+    /* ── Continue button ── */
+    .continue-btn {
+      width: 100%;
+      background: #1a6bff;
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      padding: 15px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 16px;
+      transition: background 0.15s, transform 0.1s, opacity 0.2s;
+      font-family: inherit;
+    }
+    .continue-btn:hover { background: #1558d6; }
+    .continue-btn:active { transform: scale(0.98); }
+    .continue-btn:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    /* ── Results card ── */
+    .results-card { }
+
+    .results-hero {
+      background: linear-gradient(135deg, #1a6bff 0%, #0d47d9 100%);
+      border-radius: 16px;
+      padding: 20px;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .results-device {
+      font-size: 12px;
+      opacity: 0.8;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+    .results-price-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .results-price {
+      font-size: 40px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .results-price-note {
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+    .results-time {
+      text-align: right;
+    }
+    .results-time-val {
+      font-size: 26px;
+      font-weight: 800;
+      line-height: 1;
+    }
+    .results-time-label {
+      font-size: 12px;
+      opacity: 0.75;
+      margin-top: 4px;
+    }
+
+    /* ── Varies hero (no fixed price) ── */
+    .results-hero.varies {
+      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+    }
+    .results-varies-price {
+      font-size: 22px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    .results-varies-sub {
+      font-size: 13px;
+      opacity: 0.8;
+    }
+
+    /* ── Trust pills ── */
+    .trust-box {
+      background: #f9fafb;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+    }
+    .trust-item {
+      font-size: 13px;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 0;
+      line-height: 1.4;
+    }
+
+    /* ── Status pill ── */
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 99px;
+      margin-bottom: 16px;
+    }
+    .status-pill.open {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+    .status-pill.closed {
+      background: #fef2f2;
+      color: #dc2626;
+    }
+    .status-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+    }
+    .open .status-dot  { background: #16a34a; }
+    .closed .status-dot { background: #dc2626; }
+
+    /* ── CTA buttons ── */
+    .cta-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+    .cta-btn {
+      flex: 1;
+      border: none;
+      border-radius: 13px;
+      padding: 14px 12px;
+      min-height: 52px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: transform 0.1s, opacity 0.15s;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation;
+    }
+    .cta-btn:active { transform: scale(0.97); }
+    .cta-call       { background: #111827; color: #fff; }
+    .cta-directions { background: #16a34a; color: #fff; }
+    .cta-book       { background: #1a6bff; color: #fff; }
+    .cta-book.full  { flex: unset; width: 100%; }
+
+    /* ── Start over ── */
+    .start-over {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 13px;
+      color: #6b7280;
+      cursor: pointer;
+      text-decoration: underline;
+      user-select: none;
+    }
+    .start-over:hover { color: #111827; }
+
+    /* ── Model search ── */
+    .search-input {
+      width: 100%;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 16px; /* 16px prevents iOS auto-zoom on focus */
+      font-family: inherit;
+      margin-bottom: 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .search-input:focus { border-color: #1a6bff; }
+
+    .model-list {
+      max-height: 340px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding-right: 2px;
+    }
+    .model-list::-webkit-scrollbar { width: 4px; }
+    .model-list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+
+    /* ── Extra-small phones (< 375px — e.g. iPhone SE 1st gen) ── */
+    @media (max-width: 374px) {
+      body { padding: 16px 10px 40px; }
+      .step-card { padding: 16px 14px; }
+      .step-title { font-size: 18px; }
+      .cta-row { flex-direction: column; }
+      .cta-row .cta-btn { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+<div class="funnel-shell">
+  <div class="top-bar">
+    <div class="back-btn hidden" id="backBtn" onclick="goBack()">←</div>
+    <div class="progress-wrap" id="progressWrap"></div>
+  </div>
+  <div id="stepContainer"></div>
+</div>
+
+<script>
+// ── State ────────────────────────────────────
+const state = {
+  step: 0,          // current step index
+  device: null,
+  model: null,
+  issue: null,
+  quality: null,
+};
+
+// Steps: device → (model if iphone/ipad) → issue → (quality if needed) → results
+// We compute steps dynamically based on selections
+
+function getStepCount() {
+  let count = 1; // device
+  if (state.device === "iphone" || state.device === "ipad") count++; // model
+  count++; // issue
+  if (needsQualityStep()) count++; // quality
+  return count;
+}
+
+function needsQualityStep() {
+  if (!state.device || !state.model || !state.issue) return false;
+  if (state.device !== "iphone") return false;
+  const result = getPricing(state.device, state.issue, state.model);
+  return result && result.quality;
+}
+
+function getCurrentStepIndex() {
+  // Maps logical steps to 0-based index for progress bar
+  return state.step;
+}
+
+// ── Issues per device ────────────────────────
+const DEVICE_ISSUES = {
+  iphone:  ["screen","battery","charging","camera","backglass","water","software","other"],
+  samsung: ["screen","battery","charging","camera","backglass","water","other"],
+  pixel:   ["screen","battery","charging","camera","other"],
+  ipad:    ["screen","battery","charging","other"],
+  macbook: ["screen","charging","other"],
+  console: ["other"],
+  watch:   ["screen","battery","other"],
+  other:   ["other"],
+};
+
+const ISSUE_LABELS = {
+  screen:    { label: "Screen / Display", icon: "🖥" },
+  battery:   { label: "Battery",          icon: "🔋" },
+  charging:  { label: "Charging Port",    icon: "🔌" },
+  camera:    { label: "Camera",           icon: "📸" },
+  backglass: { label: "Back Glass",       icon: "🔲" },
+  water:     { label: "Water Damage",     icon: "💧" },
+  software:  { label: "Software Issue",   icon: "⚙️" },
+  other:     { label: "Other / Not Sure", icon: "❓" },
+};
+
+const IPAD_MODELS = [
+  { id: "ipad_78_9", label: "iPad 7th, 8th, or 9th Gen" },
+  { id: "ipad_56",   label: "iPad 5th or 6th Gen" },
+  { id: "other",     label: "iPad Pro / Air / Mini / Other" },
+];
+
+// ── Render ───────────────────────────────────
+function render() {
+  // Auto-skip issue step for devices with only one issue (e.g. console, other)
+  if (isIssueStep()) {
+    const issues = DEVICE_ISSUES[state.device] || ["other"];
+    if (issues.length === 1) {
+      state.issue = issues[0];
+      state.step++;
+    }
+  }
+
+  updateProgress();
+  updateBackBtn();
+
+  const container = document.getElementById("stepContainer");
+  container.innerHTML = "";
+
+  const card = document.createElement("div");
+  card.className = "step-card";
+  // ⚠️ Append BEFORE rendering so getElementById works inside render functions
+  container.appendChild(card);
+
+  if (state.step === 0) renderDeviceStep(card);
+  else if (state.step === 1 && (state.device === "iphone" || state.device === "ipad")) renderModelStep(card);
+  else if (isIssueStep()) renderIssueStep(card);
+  else if (isQualityStep()) renderQualityStep(card);
+  else renderResults(card);
+}
+
+function isIssueStep() {
+  if (state.device === "iphone" || state.device === "ipad") return state.step === 2;
+  return state.step === 1;
+}
+
+function isQualityStep() {
+  if (!needsQualityStep()) return false;
+  if (state.device === "iphone") return state.step === 3;
+  return false;
+}
+
+function isResultsStep() {
+  return !isIssueStep() && !isQualityStep() && state.step > 0 && state.device !== null && state.issue !== null;
+}
+
+// ── Step 1: Device ───────────────────────────
+function renderDeviceStep(card) {
+  card.innerHTML = `
+    <div class="step-label">Step 1 of ${getStepCount()}</div>
+    <div class="step-title">What's your device?</div>
+    <div class="step-sub">Tap to select</div>
+    <div class="grid-2" id="deviceGrid"></div>
+  `;
+  const grid = card.querySelector("#deviceGrid");
+  DEVICE_CATEGORIES.forEach(d => {
+    const el = document.createElement("div");
+    el.className = "opt-tile" + (state.device === d.id ? " selected" : "");
+    el.innerHTML = `<div class="tile-icon">${d.icon}</div><div class="tile-label">${d.label}</div>`;
+    el.onclick = () => {
+      state.device = d.id;
+      state.model = null;
+      state.issue = null;
+      state.quality = null;
+      card.querySelectorAll(".opt-tile").forEach(t => t.classList.remove("selected"));
+      el.classList.add("selected");
+      setTimeout(nextStep, 150);
+    };
+    grid.appendChild(el);
+  });
+}
+
+// ── Step 2: Model ────────────────────────────
+function renderModelStep(card) {
+  const models = state.device === "iphone" ? IPHONE_MODELS : IPAD_MODELS;
+
+  card.innerHTML = `
+    <div class="step-label">Step 2 of ${getStepCount()}</div>
+    <div class="step-title">${state.device === "iphone" ? "Which iPhone?" : "Which iPad?"}</div>
+    <div class="step-sub">Tap to select</div>
+    ${state.device === "iphone" ? '<input class="search-input" id="modelSearch" placeholder="Search model..." oninput="filterModels()" />' : ''}
+    <div class="model-list" id="modelList"></div>
+  `;
+
+  renderModelList(models);
+}
+
+function renderModelList(models, filter = "") {
+  const list = document.getElementById("modelList");
+  if (!list) return;
+  list.innerHTML = "";
+  const filtered = filter
+    ? models.filter(m => m.label.toLowerCase().includes(filter.toLowerCase()))
+    : models;
+
+  filtered.forEach(m => {
+    const el = document.createElement("div");
+    el.className = "opt-row" + (state.model === m.id ? " selected" : "");
+    el.innerHTML = `
+      <span class="row-label">${m.label}</span>
+      <div class="row-check">${state.model === m.id ? "✓" : ""}</div>
+    `;
+    el.onclick = () => {
+      state.model = m.id;
+      state.quality = null;
+      document.querySelectorAll(".opt-row").forEach(r => {
+        r.classList.remove("selected");
+        r.querySelector(".row-check").textContent = "";
+      });
+      el.classList.add("selected");
+      el.querySelector(".row-check").textContent = "✓";
+      setTimeout(nextStep, 150);
+    };
+    list.appendChild(el);
+  });
+}
+
+function filterModels() {
+  const val = document.getElementById("modelSearch").value;
+  renderModelList(IPHONE_MODELS, val);
+}
+
+// ── Step 3: Issue ────────────────────────────
+function renderIssueStep(card) {
+  const issues = DEVICE_ISSUES[state.device] || ["other"];
+  const stepNum = (state.device === "iphone" || state.device === "ipad") ? 3 : 2;
+
+  card.innerHTML = `
+    <div class="step-label">Step ${stepNum} of ${getStepCount()}</div>
+    <div class="step-title">What needs fixing?</div>
+    <div class="step-sub">Tap to select</div>
+    <div class="grid-2" id="issueGrid"></div>
+  `;
+
+  const grid = card.querySelector("#issueGrid");
+  issues.forEach(issueId => {
+    const info = ISSUE_LABELS[issueId];
+    const el = document.createElement("div");
+    el.className = "opt-tile" + (state.issue === issueId ? " selected" : "");
+    el.innerHTML = `<div class="tile-icon">${info.icon}</div><div class="tile-label">${info.label}</div>`;
+    el.onclick = () => {
+      state.issue = issueId;
+      state.quality = null;
+      card.querySelectorAll(".opt-tile").forEach(t => t.classList.remove("selected"));
+      el.classList.add("selected");
+      setTimeout(nextStep, 150);
+    };
+    grid.appendChild(el);
+  });
+}
+
+// ── Step 4: Quality (Pro models) ─────────────
+function renderQualityStep(card) {
+  const result = getPricing(state.device, state.issue, state.model);
+
+  card.innerHTML = `
+    <div class="step-label">Step 4 of ${getStepCount()}</div>
+    <div class="step-title">Choose screen quality</div>
+    <div class="step-sub">Tap to select — both are high-quality</div>
+    <div id="qualityOptions"></div>
+  `;
+
+  const wrap = card.querySelector("#qualityOptions");
+  result.quality.forEach((q, i) => {
+    const el = document.createElement("div");
+    el.className = "quality-row" + (state.quality === i ? " selected" : "");
+    const timeStr = formatTime(q.time);
+
+    const descriptions = [
+      "Budget-friendly option · Great colors, solid performance · Most popular choice",
+      "Superior image quality · Deep blacks, vibrant colors · Closest to original Apple display"
+    ];
+
+    el.innerHTML = `
+      <div class="quality-top">
+        <div class="quality-name">${q.label}</div>
+        <div class="quality-price">$${q.price}</div>
+      </div>
+      <div class="quality-desc">${descriptions[i] || ""} · ~${timeStr}</div>
+    `;
+    el.onclick = () => {
+      state.quality = i;
+      card.querySelectorAll(".quality-row").forEach(r => r.classList.remove("selected"));
+      el.classList.add("selected");
+      setTimeout(nextStep, 200);
+    };
+    wrap.appendChild(el);
+  });
+}
+
+// ── Results ──────────────────────────────────
+function renderResults(card) {
+  const result = getPricing(state.device, state.issue, state.model);
+  const deviceLabel = DEVICE_CATEGORIES.find(d => d.id === state.device)?.label || state.device;
+  const issueLabel  = ISSUE_LABELS[state.issue]?.label || state.issue;
+  const modelLabel  = [...IPHONE_MODELS, ...IPAD_MODELS].find(m => m.id === state.model)?.label || "";
+  const status = isOpenNow();
+
+  let price = null, time = null, note = "";
+
+  if (result) {
+    if (result.quality && state.quality !== null) {
+      price = result.quality[state.quality].price;
+      time  = result.quality[state.quality].time;
+    } else {
+      price = result.price;
+      time  = result.time;
+      note  = result.note || "";
+    }
+  }
+
+  const hasFixedPrice = price !== null;
+  const timeStr = time ? formatTime(time) : null;
+
+  const summaryLine = [modelLabel, deviceLabel !== "iPhone" && deviceLabel !== "iPad" ? deviceLabel : "", issueLabel]
+    .filter(Boolean)
+    .filter((v, i, a) => a.indexOf(v) === i)
+    .join(" · ");
+
+  card.innerHTML = `
+    <div class="results-card">
+
+      ${hasFixedPrice ? `
+        <div class="results-hero">
+          <div class="results-device">${summaryLine}</div>
+          <div class="results-price-row">
+            <div>
+              <div class="results-price">$${price}</div>
+              <div class="results-price-note">Parts + labor included</div>
+            </div>
+            <div class="results-time">
+              <div class="results-time-val">~${timeStr}</div>
+              <div class="results-time-label">repair time</div>
+            </div>
+          </div>
+        </div>
+      ` : `
+        <div class="results-hero varies">
+          <div class="results-device">${summaryLine}</div>
+          <div class="results-varies-price">Free Estimate</div>
+          <div class="results-varies-sub">${note || "Come in or call — we'll give you a price on the spot"}</div>
+          ${timeStr ? `<div style="margin-top:10px;font-size:12px;opacity:0.7;">Typical time: ~${timeStr}</div>` : ""}
+        </div>
+      `}
+
+      <div class="${status.open ? "status-pill open" : "status-pill closed"}">
+        <div class="status-dot"></div>
+        ${status.message}
+      </div>
+
+      <div class="trust-box">
+        ${hasFixedPrice ? `<div class="trust-item">✅ No hidden fees · Price is final</div>` : ""}
+        <div class="trust-item">✅ 90-day warranty on all repairs</div>
+        <div class="trust-item">✅ No appointment needed · Walk right in</div>
+        <div class="trust-item">⭐ 4.9 stars · 523+ reviews</div>
+      </div>
+
+      <div class="cta-row">
+        <a class="cta-btn cta-call" href="tel:+18573408381">📞 Call</a>
+        <a class="cta-btn cta-directions" href="${BUSINESS.mapsUrl}" target="_blank">📍 Directions</a>
+      </div>
+      <a class="cta-btn cta-book cta-book full" href="${BUSINESS.bookingUrl}" target="_blank">📅 Book an Appointment</a>
+
+      <div class="start-over" onclick="startOver()">← Try a different repair</div>
+    </div>
+  `;
+}
+
+// ── Navigation ───────────────────────────────
+function nextStep() {
+  state.step++;
+  // Skip quality step if not needed (after issue selection)
+  if (isQualityStep() && !needsQualityStep()) {
+    state.step++;
+  }
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function goBack() {
+  if (state.step === 0) return;
+  state.step--;
+  // Skip quality step going back if not needed
+  if (isQualityStep() && !needsQualityStep()) state.step--;
+  // Skip single-issue step going back
+  if (isIssueStep()) {
+    const issues = DEVICE_ISSUES[state.device] || ["other"];
+    if (issues.length === 1) { state.issue = null; state.step--; }
+  }
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function startOver() {
+  state.step = 0;
+  state.device = null;
+  state.model = null;
+  state.issue = null;
+  state.quality = null;
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// ── Progress bar ─────────────────────────────
+function updateProgress() {
+  const wrap = document.getElementById("progressWrap");
+  const total = Math.max(getStepCount(), 3);
+  const current = state.step;
+  wrap.innerHTML = "";
+  for (let i = 0; i < total; i++) {
+    const seg = document.createElement("div");
+    seg.className = "progress-seg" + (i <= current ? " active" : "");
+    wrap.appendChild(seg);
+  }
+}
+
+function updateBackBtn() {
+  const btn = document.getElementById("backBtn");
+  if (state.step === 0) {
+    btn.classList.add("hidden");
+  } else {
+    btn.classList.remove("hidden");
+  }
+}
+
+// ── Utilities ────────────────────────────────
+function formatTime(minutes) {
+  if (!minutes) return null;
+  if (minutes < 60) return `${minutes} min`;
+  const h = Math.floor(minutes / 60);
+  const m = minutes % 60;
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
+}
+
+// ── Init ─────────────────────────────────────
+render();
+</script>
+</body>
+</html>

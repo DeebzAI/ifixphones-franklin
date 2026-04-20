@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iFixPhones Franklin — Flow & Screens</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', system-ui, sans-serif; background: #f8fafc; min-height: 100vh; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 99px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const BLUE = "#1a6bff";
+    const DARK = "#111827";
+    const MID = "#6b7280";
+    const BORDER = "#e5e7eb";
+    const GREEN = "#16a34a";
+    const GRAY = "#f0f2f5";
+
+    // ── Primitives ──────────────────────────────────────────────────
+    const Label = ({ children, style = {} }) => (
+      <div style={{ fontSize: 11, fontWeight: 600, color: MID, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8, ...style }}>
+        {children}
+      </div>
+    );
+
+    const Btn = ({ label, bg = BLUE, color = "#fff" }) => (
+      <div style={{
+        background: bg, color, borderRadius: 10, padding: "13px 0",
+        fontSize: 14, fontWeight: 600, cursor: "pointer", textAlign: "center", flex: 1
+      }}>{label}</div>
+    );
+
+    const ScreenFrame = ({ title, children, step, totalSteps }) => (
+      <div style={{
+        background: "#fff", borderRadius: 20, border: `1px solid ${BORDER}`,
+        boxShadow: "0 4px 24px rgba(0,0,0,0.07)", overflow: "hidden",
+        width: 300, flexShrink: 0,
+      }}>
+        <div style={{ background: "#111", padding: "10px 20px 8px", borderRadius: "20px 20px 0 0" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", color: "#fff", fontSize: 10, opacity: 0.6 }}>
+            <span>9:41</span><span>●●●</span>
+          </div>
+        </div>
+        <div style={{ padding: 20, minHeight: 400 }}>
+          {step && (
+            <div style={{ display: "flex", gap: 4, marginBottom: 14 }}>
+              {Array.from({ length: totalSteps }).map((_, i) => (
+                <div key={i} style={{ flex: 1, height: 3, borderRadius: 99, background: i < step ? BLUE : BORDER }} />
+              ))}
+            </div>
+          )}
+          {title && <div style={{ fontSize: 16, fontWeight: 700, color: DARK, marginBottom: 14 }}>{title}</div>}
+          {children}
+        </div>
+      </div>
+    );
+
+    // ── Flow Diagram nodes ──────────────────────────────────────────
+    const FlowNode = ({ label, sub, accent = false, terminal = false }) => (
+      <div style={{
+        background: accent ? BLUE : terminal ? "#f0fdf4" : "#fff",
+        border: `1.5px solid ${accent ? BLUE : terminal ? GREEN : BORDER}`,
+        borderRadius: 12, padding: "10px 16px", textAlign: "center", minWidth: 110,
+      }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: accent ? "#fff" : terminal ? GREEN : DARK }}>{label}</div>
+        {sub && <div style={{ fontSize: 11, color: accent ? "rgba(255,255,255,0.7)" : MID, marginTop: 2 }}>{sub}</div>}
+      </div>
+    );
+
+    const Arrow = ({ vertical }) => (
+      <div style={{
+        color: "#adb5bd", fontSize: 20, display: "flex", alignItems: "center", justifyContent: "center",
+        ...(vertical ? { transform: "rotate(90deg)", margin: "2px 0" } : { margin: "0 4px" })
+      }}>→</div>
+    );
+
+    // ── Individual Screens ──────────────────────────────────────────
+    const S_Landing = () => (
+      <ScreenFrame>
+        <div style={{ textAlign: "center", paddingTop: 10 }}>
+          <div style={{ fontSize: 22, fontWeight: 800, color: DARK, lineHeight: 1.2 }}>What's Wrong<br />With Your Phone?</div>
+          <div style={{ fontSize: 13, color: MID, margin: "10px 0 20px" }}>Get your price & wait time in 60 seconds</div>
+          <div style={{ background: BLUE, borderRadius: 12, padding: "14px 0", color: "#fff", fontWeight: 700, fontSize: 15 }}>
+            🔧 Start Repair Quote
+          </div>
+          <div style={{ fontSize: 11, color: MID, marginTop: 8 }}>No commitment · Walk-ins welcome</div>
+        </div>
+        <div style={{ marginTop: 24, borderTop: `1px solid ${BORDER}`, paddingTop: 16 }}>
+          <Label>Why customers trust us</Label>
+          {["⭐ 4.9 stars · 523+ reviews", "⏱ Most repairs under 30 min", "📍 15 East Central St, Franklin MA"].map(t => (
+            <div key={t} style={{ fontSize: 12, color: DARK, marginBottom: 8 }}>{t}</div>
+          ))}
+        </div>
+      </ScreenFrame>
+    );
+
+    const S_Device = () => (
+      <ScreenFrame title="What's your device?" step={1} totalSteps={3}>
+        <Label>Select device type</Label>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          {[["📱","iPhone",true],["📱","Samsung",false],["📱","Google Pixel",false],["📟","iPad",false],["💻","Other Android",false],["❓","Other",false]].map(([icon, label, sel]) => (
+            <div key={label} style={{
+              border: `1.5px solid ${sel ? BLUE : BORDER}`,
+              background: sel ? BLUE + "12" : "#fff",
+              borderRadius: 10, padding: "12px 8px", textAlign: "center", cursor: "pointer",
+            }}>
+              <div style={{ fontSize: 24 }}>{icon}</div>
+              <div style={{ fontSize: 12, fontWeight: 600, color: sel ? BLUE : DARK, marginTop: 4 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </ScreenFrame>
+    );
+
+    const S_Model = () => (
+      <ScreenFrame title="Which iPhone?" step={2} totalSteps={3}>
+        <Label>Select your model</Label>
+        {["iPhone 16 Pro / Max","iPhone 16 / Plus","iPhone 15 Pro / Max","iPhone 15 / Plus","iPhone 14 Pro / Max","iPhone 14 / Plus","iPhone 13 series","iPhone 12 & older"].map((m, i) => (
+          <div key={m} style={{
+            border: `1.5px solid ${i === 0 ? BLUE : BORDER}`,
+            background: i === 0 ? BLUE + "10" : "#fff",
+            borderRadius: 10, padding: "10px 14px", marginBottom: 8,
+            fontSize: 13, fontWeight: 500, color: i === 0 ? BLUE : DARK,
+            cursor: "pointer", display: "flex", justifyContent: "space-between", alignItems: "center"
+          }}>
+            {m}
+            {i === 0 && <span style={{ fontSize: 11, background: BLUE, color: "#fff", borderRadius: 6, padding: "2px 7px" }}>Selected</span>}
+          </div>
+        ))}
+      </ScreenFrame>
+    );
+
+    const S_Issue = () => (
+      <ScreenFrame title="What needs fixing?" step={3} totalSteps={3}>
+        <Label>Select the issue</Label>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+          {[["🖥","Screen / Display",true],["🔋","Battery",false],["🔌","Charging Port",false],["📸","Camera",false],["💧","Water Damage",false],["🔊","Speaker / Mic",false],["🔇","Power / Buttons",false],["❓","Other",false]].map(([icon, label, sel]) => (
+            <div key={label} style={{
+              border: `1.5px solid ${sel ? BLUE : BORDER}`,
+              background: sel ? BLUE + "10" : "#fff",
+              borderRadius: 10, padding: "10px 8px", textAlign: "center", cursor: "pointer"
+            }}>
+              <div style={{ fontSize: 22 }}>{icon}</div>
+              <div style={{ fontSize: 11, fontWeight: 600, color: sel ? BLUE : DARK, marginTop: 4, lineHeight: 1.3 }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </ScreenFrame>
+    );
+
+    const S_Results = () => (
+      <ScreenFrame>
+        <div style={{ background: "linear-gradient(135deg, #1a6bff, #0d47d9)", borderRadius: 14, padding: "16px 18px", color: "#fff", marginBottom: 16 }}>
+          <div style={{ fontSize: 12, opacity: 0.8, marginBottom: 6 }}>iPhone 16 Pro · Screen Repair</div>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end" }}>
+            <div>
+              <div style={{ fontSize: 30, fontWeight: 800 }}>$149</div>
+              <div style={{ fontSize: 12, opacity: 0.75 }}>OEM-quality screen</div>
+            </div>
+            <div style={{ textAlign: "right" }}>
+              <div style={{ fontSize: 24, fontWeight: 700 }}>~30 min</div>
+              <div style={{ fontSize: 12, opacity: 0.75 }}>typical wait</div>
+            </div>
+          </div>
+        </div>
+        <div style={{ background: "#f9fafb", borderRadius: 12, padding: "12px 14px", marginBottom: 14, fontSize: 12, color: DARK, lineHeight: 1.9 }}>
+          ✅ 90-day warranty included<br />
+          ✅ No appointment needed — walk right in<br />
+          ✅ Open today until 7 PM
+        </div>
+        <Label>What would you like to do?</Label>
+        <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+          <Btn label="📞 Call Now" bg="#111" />
+          <Btn label="📍 Directions" bg={GREEN} />
+        </div>
+        <Btn label="📅 Book an Appointment" />
+      </ScreenFrame>
+    );
+
+    const S_Booking = () => (
+      <ScreenFrame title="Book Your Appointment">
+        <Label>Pick a date</Label>
+        <div style={{ display: "flex", gap: 6, marginBottom: 16, overflowX: "auto" }}>
+          {[["Mon","21",false],["Tue","22",true],["Wed","23",false],["Thu","24",false],["Fri","25",false]].map(([d, n, sel]) => (
+            <div key={n} style={{
+              border: `1.5px solid ${sel ? BLUE : BORDER}`,
+              background: sel ? BLUE : "#fff",
+              borderRadius: 10, padding: "8px 10px", textAlign: "center",
+              flexShrink: 0, minWidth: 46, cursor: "pointer"
+            }}>
+              <div style={{ fontSize: 10, color: sel ? "rgba(255,255,255,0.75)" : MID }}>{d}</div>
+              <div style={{ fontSize: 16, fontWeight: 700, color: sel ? "#fff" : DARK }}>{n}</div>
+            </div>
+          ))}
+        </div>
+        <Label>Pick a time</Label>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 16 }}>
+          {["10:00am","10:30am","11:00am","11:30am","12:00pm","1:00pm"].map((t, i) => (
+            <div key={t} style={{
+              border: `1.5px solid ${i === 2 ? BLUE : BORDER}`,
+              background: i === 2 ? BLUE + "15" : "#fff",
+              borderRadius: 8, padding: "6px 12px", fontSize: 12,
+              color: i === 2 ? BLUE : DARK, fontWeight: i === 2 ? 600 : 400, cursor: "pointer"
+            }}>{t}</div>
+          ))}
+        </div>
+        <Label>Your info</Label>
+        {["Full name", "Phone number"].map(p => (
+          <div key={p} style={{
+            border: `1px solid ${BORDER}`, borderRadius: 8,
+            padding: "10px 12px", marginBottom: 8, fontSize: 13, color: "#9ca3af"
+          }}>{p}</div>
+        ))}
+        <div style={{ marginTop: 8 }}>
+          <Btn label="Confirm Booking →" />
+        </div>
+      </ScreenFrame>
+    );
+
+    const S_Confirmation = () => (
+      <ScreenFrame>
+        <div style={{ textAlign: "center", padding: "20px 0 10px" }}>
+          <div style={{ fontSize: 56, marginBottom: 12 }}>✅</div>
+          <div style={{ fontSize: 20, fontWeight: 800, color: DARK, marginBottom: 8 }}>You're all set!</div>
+          <div style={{ fontSize: 13, color: MID, lineHeight: 1.6, marginBottom: 20 }}>
+            Tuesday, April 22 at 11:00am<br />
+            iPhone 16 Pro · Screen Repair · $149
+          </div>
+          <div style={{ background: GRAY, borderRadius: 12, padding: "14px 16px", textAlign: "left", marginBottom: 16 }}>
+            <div style={{ fontSize: 12, color: DARK, lineHeight: 1.9 }}>
+              📍 15 East Central St, Franklin MA<br />
+              📞 (857) 340-8381<br />
+              ⏱ ~30 min · No deposit required
+            </div>
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <Btn label="📍 Directions" bg={GREEN} />
+            <Btn label="📞 Call Us" bg="#111" />
+          </div>
+        </div>
+      </ScreenFrame>
+    );
+
+    // ── Main App ────────────────────────────────────────────────────
+    const SCREENS = [
+      { id: "landing",       label: "1. Landing",      el: <S_Landing /> },
+      { id: "device",        label: "2. Device Type",  el: <S_Device /> },
+      { id: "model",         label: "3. Model",        el: <S_Model /> },
+      { id: "issue",         label: "4. Issue",        el: <S_Issue /> },
+      { id: "results",       label: "5. Results",      el: <S_Results /> },
+      { id: "booking",       label: "6. Booking",      el: <S_Booking /> },
+      { id: "confirmation",  label: "7. Confirmation", el: <S_Confirmation /> },
+    ];
+
+    function App() {
+      const [tab, setTab] = useState("flow");
+      const [activeScreen, setActiveScreen] = useState("landing");
+      const active = SCREENS.find(s => s.id === activeScreen);
+
+      return (
+        <div style={{ padding: 28, maxWidth: 1200, margin: "0 auto" }}>
+          {/* Header */}
+          <div style={{ marginBottom: 24 }}>
+            <div style={{ fontSize: 24, fontWeight: 800, color: DARK }}>iFixPhones Franklin</div>
+            <div style={{ fontSize: 14, color: MID, marginTop: 2 }}>Website Flow & Screen Reference · Figma Handoff</div>
+          </div>
+
+          {/* Tabs */}
+          <div style={{ display: "flex", gap: 8, marginBottom: 28 }}>
+            {[["flow","🗺  User Flow"],["screens","📱  Screens"]].map(([id, label]) => (
+              <div key={id} onClick={() => setTab(id)} style={{
+                padding: "9px 22px", borderRadius: 10, cursor: "pointer",
+                fontSize: 13, fontWeight: 600,
+                background: tab === id ? DARK : "#fff",
+                color: tab === id ? "#fff" : DARK,
+                border: `1.5px solid ${tab === id ? DARK : BORDER}`,
+                userSelect: "none",
+              }}>{label}</div>
+            ))}
+          </div>
+
+          {/* ── FLOW TAB ─────────────────────────────────────── */}
+          {tab === "flow" && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+
+              {/* Primary funnel */}
+              <div style={{ background: "#fff", borderRadius: 16, border: `1px solid ${BORDER}`, padding: 24 }}>
+                <Label>Primary Flow — Diagnostic Funnel</Label>
+                <div style={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 4, marginBottom: 28 }}>
+                  <FlowNode label="Landing" sub="Hero + CTA" accent />
+                  <Arrow />
+                  <FlowNode label="Device Type" sub="iPhone / Samsung…" />
+                  <Arrow />
+                  <FlowNode label="Model" sub="e.g. iPhone 16 Pro" />
+                  <Arrow />
+                  <FlowNode label="Issue" sub="Screen / Battery…" />
+                  <Arrow />
+                  <FlowNode label="Results" sub="Price + Time" accent />
+                </div>
+
+                <Label>Results → 3 Action Paths</Label>
+                <div style={{ display: "flex", gap: 20, flexWrap: "wrap" }}>
+
+                  {/* Call */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                    <FlowNode label="📞 Call Now" terminal />
+                    <div style={{ fontSize: 11, color: MID, textAlign: "center" }}>Dials shop directly</div>
+                  </div>
+
+                  {/* Directions */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                    <FlowNode label="📍 Directions" terminal />
+                    <div style={{ fontSize: 11, color: MID, textAlign: "center" }}>Opens Maps app</div>
+                  </div>
+
+                  {/* Book Online */}
+                  <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
+                    <FlowNode label="📅 Book Online" />
+                    <Arrow vertical />
+                    <FlowNode label="Pick Date + Time" />
+                    <Arrow vertical />
+                    <FlowNode label="Name + Phone" />
+                    <Arrow vertical />
+                    <FlowNode label="🎉 Confirmation" terminal />
+                  </div>
+                </div>
+              </div>
+
+              {/* Edge cases */}
+              <div style={{ background: "#fff", borderRadius: 16, border: `1px solid ${BORDER}`, padding: 24 }}>
+                <Label>Edge Cases to Handle</Label>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {[
+                    ["❓  Unknown model", "Show 'Not sure which model?' → tap-to-call CTA"],
+                    ["💧  Water damage", "\"Price depends on free diagnosis\" instead of fixed price — CTA to call/walk in"],
+                    ["🕐  After hours", "Results shows \"We're closed — book for tomorrow\" instead of walk-in prompt"],
+                    ["📋  Issue not listed", "'Other' → short text field + call CTA"],
+                    ["📱  Multiple issues", "Allow selecting more than one issue, show combined estimate"],
+                  ].map(([tag, note]) => (
+                    <div key={tag} style={{ display: "flex", gap: 14, padding: "10px 14px", background: GRAY, borderRadius: 10 }}>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: DARK, minWidth: 150 }}>{tag}</div>
+                      <div style={{ fontSize: 12, color: MID }}>{note}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Open questions */}
+              <div style={{ background: "#fffbeb", borderRadius: 16, border: `1px solid #fde68a`, padding: 24 }}>
+                <Label style={{ color: "#92400e" }}>Open Questions Before Building</Label>
+                <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  {[
+                    "What device brands/models do you actually service? (so we only show real options)",
+                    "Do you have a full pricing list per device + issue?",
+                    "Is there a booking system already (Square, Calendly, etc.) or building from scratch?",
+                    "Should customers be able to select multiple issues at once?",
+                  ].map((q, i) => (
+                    <div key={i} style={{ display: "flex", gap: 10, fontSize: 13, color: "#78350f" }}>
+                      <span style={{ fontWeight: 700 }}>{i + 1}.</span>
+                      <span>{q}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+            </div>
+          )}
+
+          {/* ── SCREENS TAB ──────────────────────────────────── */}
+          {tab === "screens" && (
+            <div style={{ display: "flex", gap: 24, alignItems: "flex-start" }}>
+              {/* Sidebar */}
+              <div style={{ width: 170, flexShrink: 0 }}>
+                <Label>Screens</Label>
+                {SCREENS.map(s => (
+                  <div key={s.id} onClick={() => setActiveScreen(s.id)} style={{
+                    padding: "9px 13px", borderRadius: 10, marginBottom: 6,
+                    background: activeScreen === s.id ? DARK : "#fff",
+                    color: activeScreen === s.id ? "#fff" : DARK,
+                    border: `1.5px solid ${activeScreen === s.id ? DARK : BORDER}`,
+                    fontSize: 13, fontWeight: 500, cursor: "pointer", userSelect: "none",
+                  }}>{s.label}</div>
+                ))}
+                <div style={{ marginTop: 16, padding: "10px 13px", background: "#f0f9ff", borderRadius: 10, border: `1px solid #bae6fd`, fontSize: 11, color: "#0369a1", lineHeight: 1.6 }}>
+                  💡 Click each screen to preview. These are wireframe references for Figma — not final designs.
+                </div>
+              </div>
+
+              {/* Screen display */}
+              <div>
+                {active && (
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 600, color: MID, marginBottom: 14 }}>
+                      Screen: {active.label}
+                    </div>
+                    {active.el}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+  </script>
+</body>
+</html>
